@@ -33,7 +33,18 @@ namespace Poprij.Model
         public string Email { get; set; }
         public string Logo { get; set; }
         public int Priority { get; set; }
-    
+
+        public virtual int sale { get; set; }
+        public virtual int percent { get; set; }
+
+        public string imgPath
+        {
+            get
+            {
+                var path = "D:\\VSProjects\\Poprij\\Poprij\\" + this.Logo;
+                return path;
+            }
+        }
         public virtual AgentType AgentType { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AgentPriorityHistory> AgentPriorityHistory { get; set; }

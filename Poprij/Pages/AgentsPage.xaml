@@ -15,28 +15,79 @@
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
 
+        <Grid.Resources>
+            <DataTemplate x:Key="MyCol" >
+                <Border BorderThickness="1" BorderBrush="Black" Margin="5,5,5,5">
+                    <StackPanel Width="auto" Height="auto" Orientation="Horizontal" >
+                        <Image Source="{Binding imgPath}" Width="40" Height="40" HorizontalAlignment="Right" Margin="10 0 10 0"></Image>
+                        <StackPanel Orientation="Vertical" Height="auto">
+                            <StackPanel Orientation="Horizontal" >
+                                <TextBlock Text="{Binding Path=AgentType.Title}" Width="100" HorizontalAlignment="Center"></TextBlock>
+                                <TextBlock Text="{Binding Title}" Width="250" HorizontalAlignment="Center"></TextBlock>
+                            </StackPanel>
+                            <TextBlock Text="{Binding Phone}" Width="150" HorizontalAlignment="Center"></TextBlock>
+                            <TextBlock Text="{Binding sale}" x:Name="sale" Width="100" ></TextBlock>
+                            <TextBlock Text="{Binding Priority}" Width="100" HorizontalAlignment="Center"></TextBlock>
+                        </StackPanel>
+                        <TextBlock Text="{Binding Path=percent}" HorizontalAlignment="Right"></TextBlock>
+                        <TextBlock Text="%" HorizontalAlignment="Right"></TextBlock>
+                    </StackPanel>
+                </Border>
+            </DataTemplate>
+
+        </Grid.Resources>
+
+
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="0" TextChanged="TextBox_TextChanged" VerticalAlignment="Center"></TextBox>
+
+            <ComboBox Grid.Column="1" VerticalAlignment="Center"   SelectionChanged="ComboBox_SelectionChanged">
+                <ComboBoxItem Tag="0">
+                    <TextBlock  Text="Без сортировки" ></TextBlock>
+                </ComboBoxItem>
+                <ComboBoxItem Tag="1">
+                    <TextBlock Text="По возрастанию названия" ></TextBlock>
+                </ComboBoxItem>
+                <ComboBoxItem  Tag="2">
+                    <TextBlock Text="По убыванию названия"></TextBlock>
+                </ComboBoxItem>
+                <ComboBoxItem  Tag="3">
+                    <TextBlock Text="По возастанию приоритета"></TextBlock>
+                </ComboBoxItem>
+                <ComboBoxItem  Tag="4">
+                    <TextBlock Text="По убыванию приоритета"></TextBlock>
+                </ComboBoxItem>
+            </ComboBox>
+
+            <ComboBox x:Name="Type"  Grid.Column="2"  Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" ItemsSource="{Binding}" SelectionChanged="Type_SelectionChanged">
+
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Title}"></TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+
+            </ComboBox>
         </Grid>
+        
 
-        <DataGrid AutoGenerateColumns="False" x:Name="agentGrid" Grid.Row="1" IsReadOnly="True">
+
+
+
+
+        <DataGrid AutoGenerateColumns="False" x:Name="agentGrid" Grid.Row="1" IsReadOnly="True" GridLinesVisibility="None">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Title}" Header="Наименование" Width="2*"/>
-                <DataGridTextColumn Binding="{Binding Address}" Header="Адрес" Width="2*"/>
-                <DataGridTextColumn Binding="{Binding Path=AgentType.Title}" Header="Тип" Width="*"/>
-                <DataGridTextColumn Binding="{Binding INN}" Header="ИНН" Width="*"/>
-                <DataGridTextColumn Binding="{Binding KPP}" Header="КПП" Width="*"/>
-                <DataGridTextColumn Binding="{Binding DirectorName}" Header="Имя директора" Width="*"/>
-                <DataGridTextColumn Binding="{Binding Phone}" Header="Телефон" Width="*"/>
-                <DataGridTextColumn Binding="{Binding Email}" Header="Email" Width="*"/>
-                <DataGridTextColumn Binding="{Binding Priority}" Header="Приоритет" Width="0.2*"/>
-
+                <DataGridTemplateColumn   CellTemplate="{StaticResource MyCol}" Width="*">
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>

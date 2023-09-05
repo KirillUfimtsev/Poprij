@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Poprij.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,12 +23,14 @@ namespace Poprij.Pages
     {
         private int start = 0;
         private int fullCount = 0;
+        int order;
         public AgentsPage(Frame frame)
         {
             InitializeComponent();
             
             fullCount = helper.GetContext().Agent.Count();
             full.Text = fullCount.ToString();
+            DataContext = this;
             Load();
 
         }
@@ -45,7 +48,47 @@ namespace Poprij.Pages
             if ((start + 1) * 10 > fullCount) { forward.IsEnabled = false; }
             else { forward.IsEnabled = true; };
         }
+        private void agentGrid_LoadingRow_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            Agent agent = (Agent)e.Row.DataContext;
+            int sum = 0;
+            double fsum = 0;
+            foreach (ProductSale ps in agent.ProductSale)
+            {
+                List<ProductMaterial> mtr = new List<ProductMaterial> { };
+                mtr = helper.GetContext().ProductMaterial.Where(ProductMaterial => ProductMaterial.ProductID == ps.ProductID).ToList();
+                foreach (ProductMaterial mt in mtr)
+                {
+                    double f = decimal.ToDouble(mt.Material.Cost);
+                    fsum += f * (double)mt.Count;
+                }
+                fsum = fsum * ps.ProductCount;
+                if (ps.SaleDate.AddDays(365).CompareTo(DateTime.Today) > 0)
+                    sum += ps.ProductCount;
+            }
+            agent.sale = sum;
+            agent.percent = 0;
+            if (fsum >= 10000 && fsum < 50000) agent.percent = 5;
+            if (fsum >= 50000 && fsum < 150000) agent.percent = 10;
+            if (fsum >= 150000 && fsum < 500000) agent.percent = 20;
+            if (fsum >= 500000) agent.percent = 25;
+            if (agent.percent == 25)
+            {
+                SolidColorBrush hb = new SolidColorBrush(Colors.LightGreen);
+                e.Row.Background = hb;
+            };
+        }
 
+
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox comboBox = (ComboBox)sender;
+            ComboBoxItem selectedItem = (ComboBoxItem)comboBox.SelectedItem;
+            order = Convert.ToInt32(selectedItem.Tag.ToString());
+            Load();
+        }
+        
 
         public void Load()
         {
@@ -65,6 +108,22 @@ namespace Poprij.Pages
                 myButton.Click += new RoutedEventHandler(paginButto_Click); ;
                 pagin.Children.Add(myButton);
             }
+
+            try
+            {
+                fullCount = helper.GetContext().Agent.Count();
+                if (order == 0) agentGrid.ItemsSource = helper.GetContext().Agent.OrderBy(Agent => Agent.ID).Skip(start * 10).Take(10).ToList();
+                if (order == 1) agentGrid.ItemsSource = helper.GetContext().Agent.OrderBy(Agent => Agent.Title).Skip(start * 10).Take(10).ToList();
+                if (order == 2) agentGrid.ItemsSource = helper.GetContext().Agent.OrderByDescending(Agent => Agent.Title).Skip(start * 10).Take(10).ToList();
+                if (order == 3) agentGrid.ItemsSource = helper.GetContext().Agent.OrderBy(Agent => Agent.Priority).Skip(start * 10).Take(10).ToList();
+                if (order == 4) agentGrid.ItemsSource = helper.GetContext().Agent.OrderByDescending(Agent => Agent.Priority).Skip(start * 10).Take(10).ToList();
+
+            }
+            catch
+            {
+                return;
+            };
+
             turnButton();
 
         }
@@ -101,6 +160,16 @@ namespace Poprij.Pages
         {
             start++;
             Load();
+
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void Type_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
 
         }
     }
