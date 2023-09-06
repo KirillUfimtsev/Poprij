@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Poprij"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Border BorderThickness="5" BorderBrush="Aqua">
+    <Border BorderThickness="5" BorderBrush="#b5ccc9">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>
@@ -14,10 +14,10 @@
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" Background="Gray" Height="auto" Width="auto">
+            <StackPanel Grid.Row="0" Background="#5763b3" Height="auto" Width="auto">
 
             </StackPanel>
-            <StackPanel Grid.Row="2" Background="Gray" Height="auto" Width="auto">
+            <StackPanel Grid.Row="2" Background="#5763b3" Height="auto" Width="auto">
 
             </StackPanel>
             <Frame Grid.Row="1" x:Name="frame" Height="auto" Width="auto" LoadCompleted="frame_LoadCompleted">

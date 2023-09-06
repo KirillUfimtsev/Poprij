@@ -24,6 +24,8 @@ namespace Poprij.Pages
         private int start = 0;
         private int fullCount = 0;
         int order;
+        string fnd = "";
+        int iag;
         public AgentsPage(Frame frame)
         {
             InitializeComponent();
@@ -31,6 +33,12 @@ namespace Poprij.Pages
             fullCount = helper.GetContext().Agent.Count();
             full.Text = fullCount.ToString();
             DataContext = this;
+
+            List<AgentType> agents = new List<AgentType> { };
+            agents = helper.GetContext().AgentType.ToList();
+            agents.Add(new AgentType { Title = "Все типы" });
+            Type.ItemsSource = agents.OrderBy(AgentType => AgentType.ID);
+
             Load();
 
         }
@@ -103,7 +111,7 @@ namespace Poprij.Pages
                 myButton.Height = 30;
                 myButton.Content = i + 1;
                 myButton.Width = 20;
-                myButton.HorizontalAlignment = HorizontalAlignment.Center;
+                myButton.HorizontalAlignment = HorizontalAlignment.Right;
                 myButton.Tag = i;
                 myButton.Click += new RoutedEventHandler(paginButto_Click); ;
                 pagin.Children.Add(myButton);
@@ -111,18 +119,27 @@ namespace Poprij.Pages
 
             try
             {
+                var ag = helper.GetContext().Agent.Where(Agent => Agent.Title.Contains(fnd) || Agent.Phone.Contains(fnd) || Agent.Email.Contains(fnd));
+
+                if (iag != 0)
+                {
+                    ag = ag.Where((Agent => Agent.AgentTypeID == iag));
+                }
+
+
                 fullCount = helper.GetContext().Agent.Count();
-                if (order == 0) agentGrid.ItemsSource = helper.GetContext().Agent.OrderBy(Agent => Agent.ID).Skip(start * 10).Take(10).ToList();
-                if (order == 1) agentGrid.ItemsSource = helper.GetContext().Agent.OrderBy(Agent => Agent.Title).Skip(start * 10).Take(10).ToList();
-                if (order == 2) agentGrid.ItemsSource = helper.GetContext().Agent.OrderByDescending(Agent => Agent.Title).Skip(start * 10).Take(10).ToList();
-                if (order == 3) agentGrid.ItemsSource = helper.GetContext().Agent.OrderBy(Agent => Agent.Priority).Skip(start * 10).Take(10).ToList();
-                if (order == 4) agentGrid.ItemsSource = helper.GetContext().Agent.OrderByDescending(Agent => Agent.Priority).Skip(start * 10).Take(10).ToList();
+                if (order == 0) agentGrid.ItemsSource = ag.OrderBy(Agent => Agent.ID).Skip(start * 10).Take(10).ToList();
+                if (order == 1) agentGrid.ItemsSource = ag.OrderBy(Agent => Agent.Title).Skip(start * 10).Take(10).ToList();
+                if (order == 2) agentGrid.ItemsSource = ag.OrderByDescending(Agent => Agent.Title).Skip(start * 10).Take(10).ToList();
+                if (order == 3) agentGrid.ItemsSource = ag.OrderBy(Agent => Agent.Priority).Skip(start * 10).Take(10).ToList();
+                if (order == 4) agentGrid.ItemsSource = ag.OrderByDescending(Agent => Agent.Priority).Skip(start * 10).Take(10).ToList();
 
             }
             catch
             {
                 return;
             };
+
 
             turnButton();
 
@@ -165,12 +182,14 @@ namespace Poprij.Pages
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-
+            fnd = txtFnd.Text;
+            Load();
         }
 
         private void Type_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            iag = ((AgentType)Type.SelectedItem).ID;
+            Load();
         }
     }
 }
