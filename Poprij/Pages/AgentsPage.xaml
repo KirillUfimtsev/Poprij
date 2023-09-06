@@ -20,9 +20,9 @@
         
 
         <Grid.Resources>
-            <DataTemplate x:Key="MyCol" >
+            <DataTemplate x:Key="MyCol"  >
                 <Border BorderThickness="2" BorderBrush="#b3a4ee" Margin="5,5,5,5">
-                    <StackPanel Width="auto" Height="auto" Orientation="Horizontal" >
+                    <StackPanel Width="auto" Height="auto" Orientation="Horizontal"  >
                         <Image Source="{Binding imgPath}" Width="60" Height="60" HorizontalAlignment="Right" Margin="10 0 40 0"></Image>
                         <StackPanel Orientation="Vertical" Height="auto">
                             <StackPanel Orientation="Horizontal" >
@@ -79,15 +79,15 @@
 
             </ComboBox>
         </Grid>
-        
 
 
 
 
 
-        <DataGrid AutoGenerateColumns="False" x:Name="agentGrid" Grid.Row="1" IsReadOnly="True" GridLinesVisibility="None">
+
+        <DataGrid AutoGenerateColumns="False" x:Name="agentGrid" Grid.Row="1" IsReadOnly="True" GridLinesVisibility="None" PreviewMouseDown="agentGrid_MouseDown">
             <DataGrid.Columns>
-                <DataGridTemplateColumn   CellTemplate="{StaticResource MyCol}" Width="*">
+                <DataGridTemplateColumn   CellTemplate="{StaticResource MyCol}" Width="*" >
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>

@@ -26,10 +26,12 @@ namespace Poprij.Pages
         int order;
         string fnd = "";
         int iag;
+        Frame fr;
+        
         public AgentsPage(Frame frame)
         {
             InitializeComponent();
-            
+            fr = frame;
             fullCount = helper.GetContext().Agent.Count();
             full.Text = fullCount.ToString();
             DataContext = this;
@@ -100,25 +102,9 @@ namespace Poprij.Pages
 
         public void Load()
         {
-            agentGrid.ItemsSource = helper.GetContext().Agent.OrderBy(Agent => Agent.ID).Skip(start * 10).Take(10).ToList();
-            int ost = fullCount % 10;
-            int pag = (fullCount - ost) / 10;
-            if (ost > 0) pag++;
-            pagin.Children.Clear();
-            for (int i = 0; i < pag; i++)
-            {
-                Button myButton = new Button();
-                myButton.Height = 30;
-                myButton.Content = i + 1;
-                myButton.Width = 20;
-                myButton.HorizontalAlignment = HorizontalAlignment.Right;
-                myButton.Tag = i;
-                myButton.Click += new RoutedEventHandler(paginButto_Click); ;
-                pagin.Children.Add(myButton);
-            }
-
             try
             {
+
                 var ag = helper.GetContext().Agent.Where(Agent => Agent.Title.Contains(fnd) || Agent.Phone.Contains(fnd) || Agent.Email.Contains(fnd));
 
                 if (iag != 0)
@@ -126,19 +112,44 @@ namespace Poprij.Pages
                     ag = ag.Where((Agent => Agent.AgentTypeID == iag));
                 }
 
+                else 
+                {
+                    ag = helper.GetContext().Agent.Where(Agent => Agent.Title.Contains(fnd) || Agent.Phone.Contains(fnd) || Agent.Email.Contains(fnd));
+                }
 
-                fullCount = helper.GetContext().Agent.Count();
+
+                fullCount = ag.Count();
                 if (order == 0) agentGrid.ItemsSource = ag.OrderBy(Agent => Agent.ID).Skip(start * 10).Take(10).ToList();
                 if (order == 1) agentGrid.ItemsSource = ag.OrderBy(Agent => Agent.Title).Skip(start * 10).Take(10).ToList();
                 if (order == 2) agentGrid.ItemsSource = ag.OrderByDescending(Agent => Agent.Title).Skip(start * 10).Take(10).ToList();
                 if (order == 3) agentGrid.ItemsSource = ag.OrderBy(Agent => Agent.Priority).Skip(start * 10).Take(10).ToList();
                 if (order == 4) agentGrid.ItemsSource = ag.OrderByDescending(Agent => Agent.Priority).Skip(start * 10).Take(10).ToList();
 
+                
+                int ost = fullCount % 10;
+                int pag = (fullCount - ost) / 10;
+                if (ost > 0) pag++;
+                pagin.Children.Clear();
+                for (int i = 0; i < pag; i++)
+                {
+                    Button myButton = new Button();
+                    myButton.Height = 30;
+                    myButton.Content = i + 1;
+                    myButton.Width = 20;
+                    myButton.HorizontalAlignment = HorizontalAlignment.Right;
+                    myButton.Tag = i;
+                    myButton.Click += new RoutedEventHandler(paginButto_Click); ;
+                    pagin.Children.Add(myButton);
+                }
+
             }
             catch
             {
                 return;
             };
+            
+
+            
 
 
             turnButton();
@@ -158,7 +169,7 @@ namespace Poprij.Pages
 
         private void addButton_Click(object sender, RoutedEventArgs e)
         {
-
+            fr.Content = new NewRedoAgent(null);
         }
 
         private void revButton_Click(object sender, RoutedEventArgs e)
@@ -191,5 +202,22 @@ namespace Poprij.Pages
             iag = ((AgentType)Type.SelectedItem).ID;
             Load();
         }
-    }
+
+        private void agentGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (agentGrid.SelectedItems.Count > 0)
+            {
+                Agent agent = agentGrid.SelectedItems[0] as Agent;
+
+                if (agent != null)
+                {
+                    fr.Navigate(new NewRedoAgent(agent));
+                }
+            }
+        }
+
+        }
+
+
+    
 }

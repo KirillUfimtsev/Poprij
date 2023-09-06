@@ -20,7 +20,7 @@
             <StackPanel Grid.Row="2" Background="#5763b3" Height="auto" Width="auto">
 
             </StackPanel>
-            <Frame Grid.Row="1" x:Name="frame" Height="auto" Width="auto" LoadCompleted="frame_LoadCompleted">
+            <Frame Grid.Row="1" x:Name="frame" Height="auto" Width="auto" LoadCompleted="frame_LoadCompleted" NavigationUIVisibility="Hidden">
 
             </Frame>
 

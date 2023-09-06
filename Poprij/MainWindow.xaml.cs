@@ -25,7 +25,7 @@ namespace Poprij
         public MainWindow()
         {
             InitializeComponent();
-            frame.Content = new AgentsPage(frame);
+            frame.Navigate(new AgentsPage(frame)) ;
         }
 
         private void frame_LoadCompleted(object sender, NavigationEventArgs e)
